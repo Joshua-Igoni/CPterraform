@@ -40,7 +40,6 @@ jobs:
       # **same backend & env-vars as deploy** -------------------
       - name: Export Terraform variables to runner env
         run: |
-          TF_VAR_container_image: "ignored-for-destroy"
           echo "TF_VAR_db_password=${{ secrets.DB_PASSWORD }}"             >> "$GITHUB_ENV"
 
       # ---------------------------------------------------------
