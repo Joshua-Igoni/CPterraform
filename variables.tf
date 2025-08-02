@@ -35,8 +35,3 @@ locals {
     ManagedBy = "Terraform"
   }
 }
-
-variable "alb_domain_name" {
-  description = "The domain name for the Application Load Balancer"
-  type        = string
-}
