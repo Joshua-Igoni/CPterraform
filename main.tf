@@ -29,7 +29,7 @@ module "edge" {
   source = "./modules/edge"
 
   app_name      = var.app_name
-  alb_domain_name = var.alb_domain_name
+  alb_domain_name = module.alb.lb_dns_name
   alb_dns_name    = module.alb.dns_name
   tags           = local.tags
 }
