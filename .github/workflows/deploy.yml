@@ -30,7 +30,8 @@ jobs:
     name: "Terraform Apply"
     # only run the apply step on workflow_dispatch from default branch
     if: |
-      github.event_name == 'workflow_dispatch'
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/CPassignment-edge'
     runs-on: ubuntu-latest
 
     steps:
@@ -65,3 +66,35 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
+
+    - name: Export TF outputs for later jobs
+      id: tf-out
+      run: |
+        echo "bucket=$(terraform output -raw static_bucket_name)" >> "$GITHUB_OUTPUT"
+        echo "distro=$(terraform output -raw cloudfront_domain_name)" >> "$GITHUB_OUTPUT"
+    
+    - name: Collect & upload static assets
+      env:
+        AWS_REGION:  ${{ env.AWS_REGION }}
+        IMAGE_URI:   ${{ github.event.inputs.image_uri }}          
+        STATIC_BUCKET:  ${{ steps.tf-out.outputs.bucket }}         
+        CDN_DOMAIN:     ${{ steps.tf-out.outputs.distro }}         
+      run: |
+        echo "▶︎ running collectstatic inside the built image"
+        docker run --rm \
+          -e STATIC_BUCKET=$STATIC_BUCKET \
+          -e CDN_DOMAIN=$CDN_DOMAIN \
+          "$IMAGE_URI" \
+          python /app/notejam/manage.py collectstatic --noinput
+
+        echo "▶︎ syncing ./django/static/ to s3://$STATIC_BUCKET"
+        aws s3 sync --delete django/static/ "s3://$STATIC_BUCKET/"
+
+    - name: Invalidate CloudFront
+      if: steps.tf-out.outputs.distro != ''
+      env:
+        DISTRO: ${{ steps.tf-out.outputs.distro }}
+      run: |
+        aws cloudfront create-invalidation \
+          --distribution-id "$DISTRO" \
+          --paths "/static/*"

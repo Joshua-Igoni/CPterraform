@@ -1,3 +1,5 @@
+data "aws_caller_identity" "this" {}
+
 module "network" {
   source   = "./modules/network"
   name     = var.app_name
@@ -22,6 +24,21 @@ module "rds" {
   db_password       = var.db_password
   name              = var.app_name
 }
+
+module "edge" {
+  source = "./modules/edge"
+
+  app_name      = var.app_name
+  alb_domain_name = var.alb_domain_name
+  alb_dns_name    = module.alb.dns_name
+  tags           = local.tags
+}
+
+output "cdn_url" {
+  description = "Default CloudFront URL"
+  value       = module.edge.cloudfront_domain_name
+}
+
 
 module "alb" {
   source            = "./modules/alb"
