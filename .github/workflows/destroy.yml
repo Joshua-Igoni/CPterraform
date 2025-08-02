@@ -1,0 +1,54 @@
+name: Terraform Destroy
+
+# ────────────────────────── triggers ──────────────────────────
+on:
+  workflow_dispatch:            
+    inputs:
+      confirm:                  
+        description: "Type YES to confirm destroy"
+        required: true
+
+env:
+  TF_IN_AUTOMATION: "true"
+  AWS_REGION:       ${{ vars.AWS_REGION }}
+
+permissions:
+  id-token: write      # OIDC
+  contents:  read
+
+jobs:
+  destroy:
+    if: ${{ github.event.inputs.confirm == 'YES' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout infra repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS creds (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region:     ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.5
+          terraform_wrapper: false
+
+      # **same backend & env-vars as deploy** -------------------
+      - name: Export Terraform variables to runner env
+        run: |
+          TF_VAR_container_image: "ignored-for-destroy"
+          echo "TF_VAR_db_password=${{ secrets.DB_PASSWORD }}"             >> "$GITHUB_ENV"
+
+      # ---------------------------------------------------------
+      - name: Terraform Init
+        run: terraform init -upgrade
+
+      - name: Plan destroy
+        run: terraform plan -destroy -out=tfplan
+
+      - name: Terraform Destroy
+        run: terraform apply -auto-approve tfplan
