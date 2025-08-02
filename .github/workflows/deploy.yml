@@ -30,7 +30,7 @@ jobs:
     name: "Terraform Apply"
     # only run the apply step on workflow_dispatch from default branch
     if: |
-      github.event_name == 'workflow_dispatch' &&
+      github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
