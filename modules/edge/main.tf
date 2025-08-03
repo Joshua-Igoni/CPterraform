@@ -88,8 +88,8 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern           = "/static/*"
     target_origin_id       = "s3-static"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD"]
-    cached_methods         = ["GET", "HEAD"]
+    allowed_methods        = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]
+    cached_methods         = ["HEAD","GET"]
     default_ttl            = 86400
     max_ttl                = 604800
     min_ttl                = 3600
@@ -106,8 +106,8 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern           = "/media/*"
     target_origin_id       = "s3-static"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods         = ["GET", "HEAD"]
+    allowed_methods        = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]
+    cached_methods         = ["HEAD", "GET"]
     default_ttl            = 0
     max_ttl                = 0
     min_ttl                = 0
