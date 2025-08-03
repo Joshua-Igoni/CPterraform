@@ -64,4 +64,5 @@ module "ecs" {
   secret_arn                           = module.rds.db_secret_arn
   alb_target_group_arn                 = module.alb.target_group_arn
   container_port                       = 8000
+  cloudfront_domain_name               = module.edge.cloudfront_domain_name
 }
