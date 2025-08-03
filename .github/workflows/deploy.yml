@@ -84,15 +84,17 @@ jobs:
         STATIC_BUCKET:  ${{ steps.tf-out.outputs.bucket }}         
         CDN_DOMAIN:     ${{ steps.tf-out.outputs.distro }}         
       run: |
-        echo "▶︎ running collectstatic inside the built image"
-        cid=$(docker create "$IMAGE_URI" \
-        python /app/notejam/manage.py collectstatic --noinput)
-        docker start --attach "$cid"
+       mkdir -p static_out                       # host dir that will get the files
 
-        docker cp "$cid":/app/notejam/staticfiles ./static_out
-        docker rm "$cid"
-
-        aws s3 sync --delete static_out/ "s3://$STATIC_BUCKET/"
+       echo "▶︎ collectstatic → ./static_out"
+       docker run --rm \
+          -e STATIC_BUCKET="$STATIC_BUCKET" \
+          -e CDN_DOMAIN="$CDN_DOMAIN" \
+          -v "$PWD/static_out:/app/notejam/static" \
+          "$IMAGE_URI" \
+          python /app/notejam/manage.py collectstatic --noinput
+       echo "▶︎ sync to s3://$STATIC_BUCKET"
+       aws s3 sync --delete static_out/ "s3://$STATIC_BUCKET/"
 
     - name: Invalidate CloudFront
       if: steps.tf-out.outputs.distro != ''
