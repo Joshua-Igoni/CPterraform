@@ -76,6 +76,7 @@ jobs:
       run: |
         echo "bucket=$(terraform output -raw static_bucket_name)" >> "$GITHUB_OUTPUT"
         echo "distro=$(terraform output -raw cloudfront_domain_name)" >> "$GITHUB_OUTPUT"
+        echo "distro_id=$(terraform output -raw cloudfront_distribution_id)"  >> "$GITHUB_OUTPUT"
     
     - name: Collect & upload static assets
       env:
@@ -97,10 +98,10 @@ jobs:
        aws s3 sync --delete static_out/ "s3://$STATIC_BUCKET/"
 
     - name: Invalidate CloudFront
-      if: steps.tf-out.outputs.distro != ''
+      if: ${{ steps.tf-out.outputs.distro_id != '' }}
       env:
-        DISTRO: ${{ steps.tf-out.outputs.distro }}
+        DISTRO_ID: ${{ steps.tf-out.outputs.distro_id }}
       run: |
         aws cloudfront create-invalidation \
-          --distribution-id "$DISTRO" \
+          --distribution-id "$DISTRO_ID" \
           --paths "/static/*"

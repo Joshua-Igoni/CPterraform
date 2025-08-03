@@ -24,3 +24,7 @@ output "cloudfront_domain_name" {
   description = "CloudFront distribution domain"
   value       = module.edge.cloudfront_domain_name
 }
+
+output "cloudfront_distribution_id" {
+  value = module.edge.cloudfront_distribution_id
+}
