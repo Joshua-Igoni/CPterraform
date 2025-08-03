@@ -193,8 +193,8 @@
             "Effect": "Allow",
             "Action": "iam:PassRole",
             "Resource": [
-                "arn:aws:iam::885952650506:role/ecsTaskExecutionRole",
-                "arn:aws:iam::885952650506:role/your-app-task-role"
+                "arn:aws:iam::<your-account-id>:role/ecsTaskExecutionRole",
+                "arn:aws:iam::<your-account-id>:role/your-app-task-role"
             ]
         },
         {
@@ -203,7 +203,7 @@
             "Action": [
                 "s3:ListBucket"
             ],
-            "Resource": "arn:aws:s3:::tf-state-885952650506-eu-central-1"
+            "Resource": "arn:aws:s3:::tf-state-<your-account-id>-eu-central-1"
         },
         {
             "Sid": "TfStateObjects",
@@ -248,7 +248,7 @@
                 "dynamodb:DeleteItem",
                 "dynamodb:UpdateItem"
             ],
-            "Resource": "arn:aws:dynamodb:eu-central-1:885952650506:table/tf-lock-885952650506"
+            "Resource": "arn:aws:dynamodb:eu-central-1:<your-account-id>:table/tf-lock-<your-account-id>"
         }
     ]
 }
