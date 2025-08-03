@@ -95,7 +95,7 @@ jobs:
           "$IMAGE_URI" \
           python /app/notejam/manage.py collectstatic --noinput
        echo "▶︎ sync to s3://$STATIC_BUCKET"
-       aws s3 sync --delete static_out/ "s3://$STATIC_BUCKET/"
+       aws s3 sync --delete static_out/ "s3://$STATIC_BUCKET/static/"
 
     - name: Invalidate CloudFront
       if: ${{ steps.tf-out.outputs.distro_id != '' }}
