@@ -92,7 +92,7 @@ jobs:
           python /app/notejam/manage.py collectstatic --noinput
 
         echo "▶︎ syncing /app/notejam/staticfiles/ to s3://$STATIC_BUCKET"
-        aws s3 sync --delete /app/notejam/staticfiles/ "s3://$STATIC_BUCKET/"
+        aws s3 sync --delete /app/notejam/static/ "s3://$STATIC_BUCKET/"
 
     - name: Invalidate CloudFront
       if: steps.tf-out.outputs.distro != ''
