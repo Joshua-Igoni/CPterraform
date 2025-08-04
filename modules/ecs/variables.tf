@@ -15,3 +15,8 @@ variable "container_port"       {
     type = number 
     default = 8000 
 }
+
+variable "cloudfront_domain_name" { 
+    type = string 
+    default = "" 
+}

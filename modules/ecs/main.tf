@@ -77,12 +77,14 @@ locals {
       image     = var.container_image
       essential = true
       portMappings = [{ containerPort = var.container_port, hostPort = var.container_port, protocol = "tcp" }]
+
       environment = [
         { name = "POSTGRES_HOST", value = var.db_endpoint },
         { name = "POSTGRES_PORT", value = "5432" },
         { name = "POSTGRES_USER", value = var.db_user },
         { name = "POSTGRES_DB",   value = var.name },
-        { name = "DJANGO_ALLOWED_HOSTS", value = "*" }
+        { name = "DJANGO_ALLOWED_HOSTS", value = "*" },
+        { name = "CLOUDFRONT_DOMAIN", value = var.cloudfront_domain_name}
       ]
       secrets = [{ name = "POSTGRES_PASSWORD", valueFrom = var.secret_arn }]
     }

@@ -1,0 +1,255 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "TfReadOnlyLookups",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:Describe*",
+                "elasticloadbalancing:Describe*",
+                "rds:Describe*",
+                "ecs:Describe*",
+                "logs:Describe*",
+                "cloudwatch:DescribeAlarms",
+                "cloudwatch:GetMetricData",
+                "iam:GetRole",
+                "iam:ListRolePolicies",
+                "iam:ListAttachedRolePolicies",
+                "iam:PassRole",
+                "iam:ListPolicyVersions",
+                "iam:ListPolicies",
+                "iam:ListPolicyTags",
+                "iam:ListInstanceProfilesForRole",
+                "iam:ListInstanceProfileTags",
+                "iam:ListInstanceProfiles"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VpcWrite",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateVpc",
+                "ec2:DeleteVpc",
+                "ec2:CreateSubnet",
+                "ec2:DeleteSubnet",
+                "ec2:CreateInternetGateway",
+                "ec2:AttachInternetGateway",
+                "ec2:DetachInternetGateway",
+                "ec2:DeleteInternetGateway",
+                "ec2:CreateNatGateway",
+                "ec2:DeleteNatGateway",
+                "ec2:AllocateAddress",
+                "ec2:ReleaseAddress",
+                "ec2:CreateRoute",
+                "ec2:ReplaceRoute",
+                "ec2:DeleteRoute",
+                "ec2:CreateRouteTable",
+                "ec2:DeleteRouteTable",
+                "ec2:AssociateRouteTable",
+                "ec2:DisassociateRouteTable",
+                "ec2:ModifyVpcAttribute",
+                "ec2:CreateTags",
+                "ec2:DeleteTags",
+                "ec2:AllocateAddress",
+                "ec2:ReleaseAddress",
+                "ec2:ModifySubnetAttribute",
+                "ec2:DisassociateAddress",
+                "ec2:DisassociateNatGatewayAddress",
+                "ec2:DisassociateSecurityGroupVpc",
+                "ec2:DisassociateSubnetCidrBlock"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "SecurityGroups",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateSecurityGroup",
+                "ec2:DeleteSecurityGroup",
+                "ec2:AuthorizeSecurityGroupIngress",
+                "ec2:RevokeSecurityGroupIngress",
+                "ec2:AuthorizeSecurityGroupEgress",
+                "ec2:RevokeSecurityGroupEgress",
+                "ec2:CreateNetworkAcl",
+                "ec2:DeleteNetworkAcl",
+                "ec2:CreateNetworkAclEntry",
+                "ec2:DeleteNetworkAclEntry"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AlbWrite",
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:CreateLoadBalancer",
+                "elasticloadbalancing:ModifyLoadBalancerAttributes",
+                "elasticloadbalancing:DeleteLoadBalancer",
+                "elasticloadbalancing:CreateTargetGroup",
+                "elasticloadbalancing:ModifyTargetGroup",
+                "elasticloadbalancing:DeleteTargetGroup",
+                "elasticloadbalancing:RegisterTargets",
+                "elasticloadbalancing:DeregisterTargets",
+                "elasticloadbalancing:CreateListener",
+                "elasticloadbalancing:DeleteListener",
+                "secretsmanager:CreateSecret",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:PutSecretValue",
+                "secretsmanager:TagResource",
+                "secretsmanager:UntagResource",
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DeleteSecret"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "EcsDeploy",
+            "Effect": "Allow",
+            "Action": [
+                "ecs:RegisterTaskDefinition",
+                "ecs:DeregisterTaskDefinition",
+                "ecs:UpdateService",
+                "ecs:CreateService",
+                "ecs:DeleteService",
+                "ecs:DescribeServices",
+                "ecs:DescribeTaskDefinition",
+                "ecs:CreateCluster",
+                "ecs:DeleteCluster",
+                "ecs:TagResource",
+                "ecs:UntagResource",
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:AttachRolePolicy",
+                "iam:DetachRolePolicy",
+                "iam:PutRolePolicy",
+                "iam:DeleteRolePolicy",
+                "iam:CreatePolicy",
+                "iam:DeletePolicy",
+                "elasticloadbalancing:*",
+                "iam:GetRolePolicy",
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion",
+                "cloudfront:CreateDistribution",
+                "cloudfront:UpdateDistribution",
+                "cloudfront:DeleteDistribution",
+                "cloudfront:GetDistribution",
+                "cloudfront:CreateInvalidation",
+                "cloudfront:TagResource",
+                "cloudfront:UntagResource",
+                "cloudfront:CreateOriginAccessControl",
+                "cloudfront:GetOriginAccessControl",
+                "cloudfront:GetOriginAccessControlConfig",
+                "cloudfront:GetOriginRequestPolicy",
+                "cloudfront:GetOriginRequestPolicyConfig",
+                "cloudfront:DeleteOriginAccessControl",
+                "cloudfront:DeleteOriginRequestPolicy",
+                "cloudfront:ListTagsForResource"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "LogsWrite",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "RdsWrite",
+            "Effect": "Allow",
+            "Action": [
+                "rds:CreateDBSubnetGroup",
+                "rds:DeleteDBSubnetGroup",
+                "rds:CreateDBInstance",
+                "rds:ModifyDBInstance",
+                "rds:DeleteDBInstance",
+                "rds:AddTagsToResource",
+                "rds:RemoveTagsFromResource",
+                "rds:ListTagsForResource"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "EcrPushPull",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:GetAuthorizationToken",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:PutImage",
+                "ecr:InitiateLayerUpload",
+                "ecr:UploadLayerPart",
+                "ecr:CompleteLayerUpload",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "PassRoleForTasks",
+            "Effect": "Allow",
+            "Action": "iam:PassRole",
+            "Resource": [
+                "arn:aws:iam::<your-account-id>:role/ecsTaskExecutionRole",
+                "arn:aws:iam::<your-account-id>:role/your-app-task-role"
+            ]
+        },
+        {
+            "Sid": "TfStateBucket",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": "arn:aws:s3:::tf-state-<your-account-id>-eu-central-1"
+        },
+        {
+            "Sid": "TfStateObjects",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:DeleteObject",
+                "s3:CreateBucket",
+                "s3:DeleteBucket",
+                "s3:PutBucketPolicy",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketPolicyStatus",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutEncryptionConfiguration",
+                "s3:PutBucketVersioning",
+                "s3:ListBucket",
+                "s3:ListBucketVersions",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketWebsite",
+                "s3:GetBucketVersioning",
+                "s3:GetAccelerateConfiguration",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketLogging",
+                "s3:GetBucketLocation",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetReplicationConfiguration",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketTagging",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:DeleteBucketPolicy"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "TfStateLocking",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:GetItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:UpdateItem"
+            ],
+            "Resource": "arn:aws:dynamodb:eu-central-1:<your-account-id>:table/tf-lock-<your-account-id>"
+        }
+    ]
+}

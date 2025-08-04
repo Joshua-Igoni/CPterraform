@@ -30,7 +30,8 @@ jobs:
     name: "Terraform Apply"
     # only run the apply step on workflow_dispatch from default branch
     if: |
-      github.event_name == 'workflow_dispatch'
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
@@ -42,6 +43,10 @@ jobs:
       with:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Login to ECR
+      id: ecr
+      uses: aws-actions/amazon-ecr-login@v2
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -65,3 +70,38 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
+
+    - name: Export TF outputs for later jobs
+      id: tf-out
+      run: |
+        echo "bucket=$(terraform output -raw static_bucket_name)" >> "$GITHUB_OUTPUT"
+        echo "distro=$(terraform output -raw cloudfront_domain_name)" >> "$GITHUB_OUTPUT"
+        echo "distro_id=$(terraform output -raw cloudfront_distribution_id)"  >> "$GITHUB_OUTPUT"
+    
+    - name: Collect & upload static assets
+      env:
+        AWS_REGION:  ${{ env.AWS_REGION }}
+        IMAGE_URI:   ${{ github.event.inputs.image_uri }}          
+        STATIC_BUCKET:  ${{ steps.tf-out.outputs.bucket }}         
+        CDN_DOMAIN:     ${{ steps.tf-out.outputs.distro }}         
+      run: |
+       mkdir -p static_out                       # host dir that will get the files
+
+       echo "▶︎ collectstatic → ./static_out"
+       docker run --rm \
+          -e STATIC_BUCKET="$STATIC_BUCKET" \
+          -e CDN_DOMAIN="$CDN_DOMAIN" \
+          -v "$PWD/static_out:/app/notejam/static" \
+          "$IMAGE_URI" \
+          python /app/notejam/manage.py collectstatic --noinput
+       echo "▶︎ sync to s3://$STATIC_BUCKET"
+       aws s3 sync --delete static_out/ "s3://$STATIC_BUCKET/static/"
+
+    - name: Invalidate CloudFront
+      if: ${{ steps.tf-out.outputs.distro_id != '' }}
+      env:
+        DISTRO_ID: ${{ steps.tf-out.outputs.distro_id }}
+      run: |
+        aws cloudfront create-invalidation \
+          --distribution-id "$DISTRO_ID" \
+          --paths "/static/*"

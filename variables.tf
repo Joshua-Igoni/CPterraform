@@ -28,3 +28,10 @@ variable "exec_permissions_boundary_arn" {
   default = ""
   description = "(Optional) ARN of an IAM permissions boundary to attach to exec/task roles"
 }
+
+locals {
+  tags = {
+    Project   = var.app_name
+    ManagedBy = "Terraform"
+  }
+}

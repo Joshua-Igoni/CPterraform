@@ -1,3 +1,5 @@
+data "aws_caller_identity" "this" {}
+
 module "network" {
   source   = "./modules/network"
   name     = var.app_name
@@ -23,6 +25,21 @@ module "rds" {
   name              = var.app_name
 }
 
+module "edge" {
+  source = "./modules/edge"
+
+  app_name      = var.app_name
+  alb_domain_name = module.alb.lb_dns_name
+  alb_dns_name    = module.alb.dns_name
+  tags           = local.tags
+}
+
+output "cdn_url" {
+  description = "Default CloudFront URL"
+  value       = module.edge.cloudfront_domain_name
+}
+
+
 module "alb" {
   source            = "./modules/alb"
   vpc_id            = module.network.vpc_id
@@ -47,4 +64,5 @@ module "ecs" {
   secret_arn                           = module.rds.db_secret_arn
   alb_target_group_arn                 = module.alb.target_group_arn
   container_port                       = 8000
+  cloudfront_domain_name               = module.edge.cloudfront_domain_name
 }
