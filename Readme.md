@@ -57,6 +57,11 @@ Wait ~5–10 minutes for RDS, ECS & CloudFront to stabilize, then visit your Clo
     └── edge/         # S3 static assets bucket + CloudFront distribution + OAC
 ```
 ## Alternatively
+
+**Requirements**
+1. have a backend bucket for terraform to store tf state (pipeline flow)
+2. github OICD role for authentication to aws, attach permissions "policy.json"
+
 - Fork both terraform and application: you can fork both repos into your account/org
 - make sure you have github OIDC integrated into your aws account
 - Store OIDC aws arn in secrets, region in variables, terraform pipeline will need it to authenticate and create/read resources.
